@@ -23,11 +23,14 @@ export default function AuthPage() {
 
   useEffect(() => {
     // Check if Supabase keys are configured
+    const key =
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const hasKeys =
       Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
       !process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder") &&
-      Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) &&
-      !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.includes("placeholder");
+      Boolean(key) &&
+      !key?.includes("placeholder");
 
     setIsConfigured(hasKeys);
 
