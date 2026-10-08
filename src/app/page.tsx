@@ -210,7 +210,7 @@ export default function EntryLandingPage() {
             className="pt-2 flex flex-col items-center gap-3"
           >
             <Link
-              href="/home"
+              href="/auth"
               className="btn-projectone-accent px-8 py-3.5 text-sm sm:text-base group"
             >
               <span className="font-extrabold tracking-wider">ENTER TANK</span>

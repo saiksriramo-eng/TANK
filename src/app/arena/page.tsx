@@ -1,18 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  RotateCcw, 
-  CheckCircle2, 
-  MessageSquare,
-  Sparkles,
-  Check
+import { useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Building2,
+  Rocket,
+  Users,
+  Globe,
+  Calendar,
+  Briefcase,
+  Target,
+  DollarSign,
+  Lightbulb,
+  AlertTriangle,
+  ChevronRight,
 } from "lucide-react";
 
-interface PitchData {
+interface ProjectData {
   name: string;
   category: string;
   tagline: string;
@@ -23,409 +30,587 @@ interface PitchData {
   valuation: string;
 }
 
-const DEFAULT_PITCH: PitchData = {
-  name: "OmniHarvest",
-  category: "AgTech Robotics",
-  tagline: "Autonomous micro-drone pollination for commercial orchards facing pollinator deficits.",
-  problem: "Commercial bee colony collapses create urgent yield deficits across almond and fruit acreage, costing growers millions.",
-  solution: "Sub-ounce autonomous micro-drones applying electrostatic pollen dispersal with computer vision targeting.",
-  marketSize: "$18.4B Specialty Crop Pollination",
-  fundingAsk: "$2,500,000",
-  valuation: "$20,800,000 Post-Money",
-};
-
-interface RoundQuestion {
-  investorId: string;
-  investorName: string;
-  archetype: string;
-  firm: string;
-  factor: string;
-  question: string;
-  sampleAnswer: string;
+interface CompanyData {
+  companyName: string;
+  website: string;
+  foundedDate: string;
+  teamSize: string;
+  founderName: string;
+  founderRole: string;
 }
 
-const QUESTIONS: RoundQuestion[] = [
-  {
-    investorId: "marcus",
-    investorName: "Marcus Vance",
-    archetype: "The Skeptic",
-    firm: "Obsidian Venture Partners",
-    factor: "Unit Economics & Margin Durability",
-    question: "Walk me through your unit economics without growth subsidies. When field maintenance and infrastructure depreciation are fully accounted for, what does your true gross margin look like?",
-    sampleAnswer: "Our gross margins currently stand at 64% inclusive of hardware amortization and field technician labor. By leveraging regional agricultural maintenance depots rather than centralized dispatch, our marginal servicing cost decreases by 28% as cluster density increases.",
-  },
-  {
-    investorId: "elena",
-    investorName: "Dr. Elena Rostova",
-    archetype: "The Quant",
-    firm: "Vector Alpha Capital",
-    factor: "Cohort Retention & Payback Velocity",
-    question: "Assumptions aren't data. How are you measuring customer retention across twelve months, and what is your verified customer acquisition payback curve?",
-    sampleAnswer: "In our initial pilot cohort across 4,200 acres, customer renewal rate was 92% year-over-year. Fully loaded customer acquisition cost of $14,000 is recouped within 7.4 months based on initial deployment licensing and recurring agronomy analytics fees.",
-  },
-  {
-    investorId: "aria",
-    investorName: "Aria Chen",
-    archetype: "The Visionary",
-    firm: "Superlinear Global",
-    factor: "Category Defensibility & Moats",
-    question: "If an incumbent agricultural machinery giant bundles a competitive autonomous dispersal feature into their existing tractor fleet next quarter, what structural moat protects your business?",
-    sampleAnswer: "Our defensibility lies in three proprietary patents covering electrostatic micronized pollen dispersal and closed-loop canopy computer vision models trained on proprietary multi-spectral orchard datasets that ground tractors cannot replicate.",
-  },
-  {
-    investorId: "sully",
-    investorName: "David Sullivan",
-    archetype: "The Operator",
-    firm: "Forge Operational Fund",
-    factor: "Go-To-Market Distribution & Scaling Velocities",
-    question: "Execution eats vision for breakfast. Commercial procurement in this category is notoriously conservative. How do you compress your enterprise sales cycle and scale field distribution?",
-    sampleAnswer: "We bypass multi-month individual grower sales cycles by partnering directly with grower cooperatives and agricultural packing houses who act as channel distributors in exchange for volume-weighted telemetry rebates.",
-  },
-];
+export default function ArenaIntakePage() {
+  const router = useRouter();
+  const [step, setStep] = useState<1 | 2>(1);
 
-export default function InvestorsArenaPage() {
-  const [pitch, setPitch] = useState<PitchData>(DEFAULT_PITCH);
-  const [activeRound, setActiveRound] = useState<number>(0);
-  const [founderAnswer, setFounderAnswer] = useState<string>("");
-  const [roundCritiques, setRoundCritiques] = useState<{ [round: number]: { answer: string; feedback: string; status: "Approved" | "Concern" | "Strong" } }>({});
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [simulationComplete, setSimulationComplete] = useState<boolean>(false);
+  const [project, setProject] = useState<ProjectData>({
+    name: "",
+    category: "",
+    tagline: "",
+    problem: "",
+    solution: "",
+    marketSize: "",
+    fundingAsk: "",
+    valuation: "",
+  });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("tank_active_pitch");
-      if (saved) {
-        try {
-          setPitch(JSON.parse(saved));
-        } catch {
-          // fallback
-        }
-      }
-    }
-  }, []);
+  const [company, setCompany] = useState<CompanyData>({
+    companyName: "",
+    website: "",
+    foundedDate: "",
+    teamSize: "",
+    founderName: "",
+    founderRole: "",
+  });
 
-  const currentQ = QUESTIONS[activeRound];
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const handleUseSample = () => {
-    setFounderAnswer(currentQ.sampleAnswer);
+  const validateStep1 = () => {
+    const errs: { [key: string]: string } = {};
+    if (!project.name.trim()) errs.name = "Project name is required";
+    if (!project.category.trim()) errs.category = "Category is required";
+    if (!project.problem.trim()) errs.problem = "Describe the problem you solve";
+    if (!project.solution.trim()) errs.solution = "Describe your solution";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
-  const handleAnswerSubmit = (e: React.FormEvent) => {
+  const validateStep2 = () => {
+    const errs: { [key: string]: string } = {};
+    if (!company.companyName.trim()) errs.companyName = "Company name is required";
+    if (!company.founderName.trim()) errs.founderName = "Founder name is required";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handleStep1Next = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!founderAnswer.trim()) return;
-
-    setIsSubmitting(true);
-
-    setTimeout(() => {
-      let feedback = "";
-      let status: "Approved" | "Concern" | "Strong" = "Approved";
-
-      if (currentQ.investorId === "marcus") {
-        status = founderAnswer.length > 80 ? "Strong" : "Concern";
-        feedback = `Marcus Vance: "The margin structure is plausible, provided warranty reserves hold. I will still require strict liquidation covenants in the term sheet."`;
-      } else if (currentQ.investorId === "elena") {
-        status = founderAnswer.includes("%") || founderAnswer.length > 90 ? "Strong" : "Approved";
-        feedback = `Dr. Elena Rostova: "Your cohort payback figures satisfy our threshold criteria. We will verify the retention raw data during formal technical diligence."`;
-      } else if (currentQ.investorId === "aria") {
-        status = "Strong";
-        feedback = `Aria Chen: "Clear technological asymmetry. The proprietary dataset creates an authentic barrier against copycats."`;
-      } else {
-        status = "Strong";
-        feedback = `David Sullivan: "Channel cooperative distribution is the correct operational wedge. Eliminates direct enterprise CAC drag."`;
-      }
-
-      setRoundCritiques((prev) => ({
-        ...prev,
-        [activeRound]: {
-          answer: founderAnswer,
-          feedback,
-          status,
-        },
-      }));
-
-      setIsSubmitting(false);
-      setFounderAnswer("");
-
-      if (activeRound < QUESTIONS.length - 1) {
-        setActiveRound(activeRound + 1);
-      } else {
-        setSimulationComplete(true);
-      }
-    }, 600);
+    if (validateStep1()) {
+      setErrors({});
+      setStep(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
-  const handleRestart = () => {
-    setActiveRound(0);
-    setFounderAnswer("");
-    setRoundCritiques({});
-    setSimulationComplete(false);
+  const handleStep2Submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateStep2()) {
+      // Save intake data to localStorage for the pitch simulation
+      const intakeData = {
+        ...project,
+        ...company,
+      };
+      localStorage.setItem("tank_active_pitch", JSON.stringify(project));
+      localStorage.setItem("tank_company_data", JSON.stringify(company));
+      localStorage.setItem("tank_intake_complete", JSON.stringify(intakeData));
+
+      // Navigate to the pitch simulation page
+      router.push("/pitch");
+    }
   };
+
+  const categories = [
+    "SaaS / Software",
+    "FinTech",
+    "HealthTech / BioTech",
+    "EdTech",
+    "AgTech",
+    "CleanTech / Climate",
+    "AI / ML",
+    "Consumer / D2C",
+    "Marketplace",
+    "Hardware / IoT",
+    "Web3 / Crypto",
+    "Other",
+  ];
+
+  const teamSizes = ["Solo Founder", "2-5", "6-15", "16-50", "50+"];
 
   return (
     <div className="min-h-[calc(100vh-5rem)] bg-[#FAF8F5] text-[#131311] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto space-y-8">
-        
-        {/* Navigation & Venture Status Strip */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-zinc-200 gap-4">
-          <div>
-            <Link
-              href="/pitch"
-              className="inline-flex items-center gap-2 text-xs font-bold text-[#6C6C6A] hover:text-[#131311] transition-colors mb-2 uppercase tracking-wider"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Edit Pitch Parameters</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <h1 className="font-extrabold text-2xl sm:text-3xl text-[#131311] tracking-tight">
-                {pitch.name}
-              </h1>
-              <span className="bg-[#131311] text-white text-xs font-bold px-2.5 py-0.5 rounded-md">
-                {pitch.category}
-              </span>
-            </div>
-          </div>
+      <div className="max-w-3xl mx-auto space-y-8">
+        {/* Navigation & Header */}
+        <div className="pb-6 border-b border-zinc-200">
+          <Link
+            href="/home"
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#6C6C6A] hover:text-[#131311] transition-colors mb-4 uppercase tracking-wider"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Dashboard</span>
+          </Link>
 
-          {/* Quick Metrics Bar */}
-          <div className="flex items-center gap-6 text-xs font-bold">
-            <div>
-              <span className="text-[#6C6C6A] block text-[10px] uppercase">CAPITAL ASK</span>
-              <span className="text-[#131311] font-extrabold text-sm">{pitch.fundingAsk}</span>
-            </div>
-            <div>
-              <span className="text-[#6C6C6A] block text-[10px] uppercase">POST-MONEY</span>
-              <span className="text-[#131311] font-extrabold text-sm">{pitch.valuation}</span>
-            </div>
-            <button
-              onClick={handleRestart}
-              className="p-2 rounded-lg border-[1.5px] border-[#131311] bg-white text-[#131311] hover:bg-zinc-100 transition-colors shadow-[2px_2px_0px_#131311]"
-              title="Restart Cross-Examination"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
+          <div className="flex items-center gap-3">
+            <h1 className="font-extrabold text-2xl sm:text-3xl text-[#131311] tracking-tight">
+              Enter the Arena
+            </h1>
+            <span className="bg-[#DE7356] text-[#131311] text-xs font-extrabold px-2.5 py-0.5 rounded-md border border-[#131311]">
+              INTAKE
+            </span>
           </div>
+          <p className="text-sm text-[#6C6C6A] font-medium mt-2 max-w-xl">
+            Tell us about your startup. The more detail you provide, the sharper
+            the investor scrutiny.
+          </p>
         </div>
 
-        {/* 4 Rounds Progress Indicator */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {QUESTIONS.map((q, idx) => {
-            const isDone = roundCritiques[idx] !== undefined;
-            const isCurrent = activeRound === idx && !simulationComplete;
-
-            return (
-              <div
-                key={q.investorId}
-                className={`p-3.5 rounded-xl border-[1.5px] transition-all text-xs ${
-                  isCurrent
-                    ? "border-[#131311] bg-[#DE7356] text-[#131311] font-bold shadow-[2px_2px_0px_#131311]"
-                    : isDone
-                    ? "border-[#131311] bg-[#F3F2EA] text-[#131311]"
-                    : "border-zinc-300 bg-white text-zinc-400"
-                }`}
-              >
-                <div className="flex items-center justify-between text-[10px] mb-1 font-bold">
-                  <span>ROUND 0{idx + 1}</span>
-                  {isDone && <CheckCircle2 className="w-3.5 h-3.5 text-[#131311]" />}
-                </div>
-                <div className="font-extrabold truncate">{q.investorName}</div>
-                <div className="text-[10px] text-[#131311]/70 truncate mt-0.5">{q.factor}</div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Cross-Examination Interaction Pod */}
-        {!simulationComplete ? (
-          <div className="rounded-[20px] border-[1.5px] border-[#131311] bg-white p-6 sm:p-10 space-y-8 shadow-[4px_4px_0px_#131311]">
-            {/* Investor Speaking Box */}
-            <div className="p-6 rounded-xl border-[1.5px] border-[#131311] bg-[#131311] text-white space-y-4 shadow-[3px_3px_0px_#000]">
-              <div className="flex items-center justify-between text-xs text-zinc-400 pb-3 border-b border-zinc-800">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#DE7356]" />
-                  <span className="text-white font-bold">{currentQ.investorName}</span>
-                  <span>({currentQ.archetype})</span>
-                </div>
-                <span>{currentQ.firm}</span>
-              </div>
-
-              <div className="text-xs text-zinc-400 font-bold uppercase tracking-wider">
-                EVALUATION FACTOR : <strong className="text-[#DE7356]">{currentQ.factor}</strong>
-              </div>
-
-              <blockquote className="font-extrabold text-xl sm:text-2xl text-white leading-snug">
-                &ldquo;{currentQ.question}&rdquo;
-              </blockquote>
-            </div>
-
-            {/* Deliberation Record To Date */}
-            {Object.keys(roundCritiques).length > 0 && (
-              <div className="space-y-3 pt-2">
-                <span className="text-xs font-bold text-[#6C6C6A] uppercase tracking-wider block">
-                  Deliberation Record To Date:
+        {/* Step Indicator */}
+        <div className="grid grid-cols-2 gap-3">
+          <div
+            className={`p-3.5 rounded-xl border-[1.5px] transition-all text-xs ${
+              step === 1
+                ? "border-[#131311] bg-[#DE7356] text-[#131311] font-bold shadow-[2px_2px_0px_#131311]"
+                : step === 2
+                ? "border-[#131311] bg-[#F3F2EA] text-[#131311]"
+                : "border-zinc-300 bg-white text-zinc-400"
+            }`}
+          >
+            <div className="flex items-center justify-between text-[10px] font-bold mb-1">
+              <span>STEP 01</span>
+              {step === 2 && (
+                <span className="w-4 h-4 rounded-full bg-[#131311] text-white flex items-center justify-center text-[10px]">
+                  ✓
                 </span>
-                {Object.entries(roundCritiques).map(([roundIdx, item]) => {
-                  const q = QUESTIONS[Number(roundIdx)];
-                  return (
-                    <div
-                      key={roundIdx}
-                      className="p-4 rounded-xl border-[1.5px] border-[#131311] bg-[#F3F2EA] text-xs space-y-1.5"
-                    >
-                      <div className="flex items-center justify-between text-[#6C6C6A] font-bold">
-                        <span className="text-[#131311] font-extrabold">{q.investorName} ({q.factor})</span>
-                        <span className="bg-[#DE7356] text-[#131311] px-2 py-0.5 rounded text-[10px]">
-                          {item.status}
-                        </span>
-                      </div>
-                      <p className="text-[#131311] text-xs font-medium italic">
-                        &ldquo;{item.feedback}&rdquo;
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Founder Answer Form */}
-            <form onSubmit={handleAnswerSubmit} className="space-y-4 pt-4 border-t border-zinc-200">
-              <div className="flex items-center justify-between">
-                <label className="text-xs text-[#131311] uppercase font-extrabold flex items-center gap-2">
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>Your Defense (Round {activeRound + 1} of 4):</span>
-                </label>
-
-                <button
-                  type="button"
-                  onClick={handleUseSample}
-                  className="text-xs font-bold text-[#6C6C6A] hover:text-[#131311] flex items-center gap-1.5 transition-colors"
-                >
-                  <Sparkles className="w-3 h-3 text-[#DE7356]" />
-                  <span>Insert Sample Defense</span>
-                </button>
-              </div>
-
-              <textarea
-                rows={4}
-                required
-                value={founderAnswer}
-                onChange={(e) => setFounderAnswer(e.target.value)}
-                placeholder="Defend your venture metrics, unit economics, or market strategy directly..."
-                className="w-full p-4 rounded-xl bg-[#FAF8F5] border-[1.5px] border-[#131311] text-[#131311] text-sm font-semibold leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#DE7356]"
-              />
-
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !founderAnswer.trim()}
-                  className="btn-projectone-accent px-8 py-3.5 text-xs sm:text-sm font-extrabold disabled:opacity-50"
-                >
-                  <span>{isSubmitting ? "INVESTOR EVALUATING..." : "SUBMIT DEFENSE TO PARTNER"}</span>
-                  <span className="btn-arrow-box">
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
-                </button>
-              </div>
-            </form>
+              )}
+            </div>
+            <div className="font-extrabold flex items-center gap-1.5">
+              <Rocket className="w-3.5 h-3.5" />
+              Project Details
+            </div>
           </div>
-        ) : (
-          /* Simulation Complete */
-          <div className="rounded-[24px] border-[1.5px] border-[#131311] bg-white p-8 sm:p-12 space-y-8 shadow-[4px_4px_0px_#131311]">
-            <div className="text-center space-y-3 pb-8 border-b border-zinc-200">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#131311] text-white text-xs font-bold uppercase">
-                <CheckCircle2 className="w-4 h-4 text-[#DE7356]" />
-                <span>CROSS-EXAMINATION COMPLETE</span>
-              </div>
-              <h2 className="font-extrabold text-4xl sm:text-5xl text-[#131311] tracking-tight">
-                Syndicate Deliberation Verdict
+
+          <div
+            className={`p-3.5 rounded-xl border-[1.5px] transition-all text-xs ${
+              step === 2
+                ? "border-[#131311] bg-[#DE7356] text-[#131311] font-bold shadow-[2px_2px_0px_#131311]"
+                : "border-zinc-300 bg-white text-zinc-400"
+            }`}
+          >
+            <div className="flex items-center justify-between text-[10px] font-bold mb-1">
+              <span>STEP 02</span>
+            </div>
+            <div className="font-extrabold flex items-center gap-1.5">
+              <Building2 className="w-3.5 h-3.5" />
+              Company Info
+            </div>
+          </div>
+        </div>
+
+        {/* Step 1: Project Details Form */}
+        {step === 1 && (
+          <form
+            onSubmit={handleStep1Next}
+            className="rounded-[20px] border-[1.5px] border-[#131311] bg-white p-6 sm:p-10 space-y-6 shadow-[4px_4px_0px_#131311]"
+          >
+            <div className="flex items-center gap-2 pb-4 border-b border-zinc-200">
+              <Rocket className="w-5 h-5 text-[#DE7356]" />
+              <h2 className="font-extrabold text-lg text-[#131311] uppercase tracking-wider">
+                Tell Us About Your Project
               </h2>
-              <p className="text-sm sm:text-base text-[#6C6C6A] max-w-xl mx-auto">
-                All four partners have analyzed your defenses against their core criteria.
-              </p>
             </div>
 
-            {/* Score & Consensus Strip */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 rounded-2xl bg-[#131311] text-white text-center shadow-[3px_3px_0px_#000]">
-              <div>
-                <span className="text-zinc-400 text-xs block mb-1">SYNDICATE CONSENSUS</span>
-                <span className="text-white font-extrabold text-3xl">82 / 100</span>
+            {/* Project Name */}
+            <div>
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <Lightbulb className="w-3.5 h-3.5 text-[#DE7356]" />
+                  Project / Startup Name *
+                </span>
+              </label>
+              <input
+                type="text"
+                value={project.name}
+                onChange={(e) =>
+                  setProject({ ...project, name: e.target.value })
+                }
+                placeholder="e.g. OmniHarvest, Lattice, Notion"
+                className={`w-full bg-[#FAF8F5] border-[1.5px] ${
+                  errors.name ? "border-red-400" : "border-[#131311]"
+                } rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]`}
+              />
+              {errors.name && (
+                <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> {errors.name}
+                </p>
+              )}
+            </div>
+
+            {/* Category */}
+            <div>
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5 text-[#DE7356]" />
+                  Category / Vertical *
+                </span>
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setProject({ ...project, category: cat })}
+                    className={`py-2.5 px-3 rounded-xl border-[1.5px] text-xs font-bold transition-all ${
+                      project.category === cat
+                        ? "border-[#131311] bg-[#DE7356] text-[#131311] shadow-[2px_2px_0px_#131311]"
+                        : "border-zinc-300 bg-[#FAF8F5] text-[#6C6C6A] hover:border-[#131311] hover:text-[#131311]"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
               </div>
+              {errors.category && (
+                <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> {errors.category}
+                </p>
+              )}
+            </div>
+
+            {/* Tagline */}
+            <div>
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                One-Line Pitch
+              </label>
+              <input
+                type="text"
+                value={project.tagline}
+                onChange={(e) =>
+                  setProject({ ...project, tagline: e.target.value })
+                }
+                placeholder="Summarize your startup in one sentence"
+                className="w-full bg-[#FAF8F5] border-[1.5px] border-[#131311] rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]"
+              />
+            </div>
+
+            {/* Problem */}
+            <div>
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 text-[#DE7356]" />
+                  The Problem You Solve *
+                </span>
+              </label>
+              <textarea
+                rows={3}
+                value={project.problem}
+                onChange={(e) =>
+                  setProject({ ...project, problem: e.target.value })
+                }
+                placeholder="What urgent pain point or gap exists in the market?"
+                className={`w-full bg-[#FAF8F5] border-[1.5px] ${
+                  errors.problem ? "border-red-400" : "border-[#131311]"
+                } rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]`}
+              />
+              {errors.problem && (
+                <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> {errors.problem}
+                </p>
+              )}
+            </div>
+
+            {/* Solution */}
+            <div>
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <Lightbulb className="w-3.5 h-3.5 text-[#DE7356]" />
+                  Your Solution *
+                </span>
+              </label>
+              <textarea
+                rows={3}
+                value={project.solution}
+                onChange={(e) =>
+                  setProject({ ...project, solution: e.target.value })
+                }
+                placeholder="How does your product or service solve this problem?"
+                className={`w-full bg-[#FAF8F5] border-[1.5px] ${
+                  errors.solution ? "border-red-400" : "border-[#131311]"
+                } rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]`}
+              />
+              {errors.solution && (
+                <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> {errors.solution}
+                </p>
+              )}
+            </div>
+
+            {/* Market Size & Funding Ask (side by side) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <span className="text-zinc-400 text-xs block mb-1">PARTNER VOTE</span>
-                <span className="text-[#DE7356] font-extrabold text-3xl">3 - 1 IN FAVOR</span>
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <Target className="w-3.5 h-3.5 text-[#DE7356]" />
+                    Total Addressable Market
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  value={project.marketSize}
+                  onChange={(e) =>
+                    setProject({ ...project, marketSize: e.target.value })
+                  }
+                  placeholder="e.g. $18.4B"
+                  className="w-full bg-[#FAF8F5] border-[1.5px] border-[#131311] rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]"
+                />
               </div>
+
               <div>
-                <span className="text-zinc-400 text-xs block mb-1">SYNDICATE VERDICT</span>
-                <span className="text-white font-extrabold text-lg">CONDITIONAL TERM SHEET</span>
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <DollarSign className="w-3.5 h-3.5 text-[#DE7356]" />
+                    Capital Ask
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  value={project.fundingAsk}
+                  onChange={(e) =>
+                    setProject({ ...project, fundingAsk: e.target.value })
+                  }
+                  placeholder="e.g. $2,500,000"
+                  className="w-full bg-[#FAF8F5] border-[1.5px] border-[#131311] rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]"
+                />
               </div>
             </div>
 
-            {/* Partner Critiques Summary */}
-            <div className="space-y-4">
-              <span className="text-xs font-extrabold text-[#131311] uppercase tracking-wider block">
-                Partner Individual Critiques &amp; Analysis:
-              </span>
+            {/* Valuation */}
+            <div>
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <DollarSign className="w-3.5 h-3.5 text-[#DE7356]" />
+                  Target Valuation (Post-Money)
+                </span>
+              </label>
+              <input
+                type="text"
+                value={project.valuation}
+                onChange={(e) =>
+                  setProject({ ...project, valuation: e.target.value })
+                }
+                placeholder="e.g. $20,800,000 Post-Money"
+                className="w-full bg-[#FAF8F5] border-[1.5px] border-[#131311] rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]"
+              />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {QUESTIONS.map((q, idx) => {
-                  const item = roundCritiques[idx];
-                  return (
-                    <div
-                      key={q.investorId}
-                      className="p-5 rounded-xl border-[1.5px] border-[#131311] bg-[#F3F2EA] space-y-2"
+            {/* Submit */}
+            <div className="flex justify-end pt-4 border-t border-zinc-200">
+              <button
+                type="submit"
+                className="btn-projectone-accent px-8 py-3.5 text-xs sm:text-sm font-extrabold"
+              >
+                <span>CONTINUE TO COMPANY INFO</span>
+                <span className="btn-arrow-box">
+                  <ChevronRight className="w-4 h-4" />
+                </span>
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Step 2: Company Info Form */}
+        {step === 2 && (
+          <form
+            onSubmit={handleStep2Submit}
+            className="rounded-[20px] border-[1.5px] border-[#131311] bg-white p-6 sm:p-10 space-y-6 shadow-[4px_4px_0px_#131311]"
+          >
+            <div className="flex items-center gap-2 pb-4 border-b border-zinc-200">
+              <Building2 className="w-5 h-5 text-[#DE7356]" />
+              <h2 className="font-extrabold text-lg text-[#131311] uppercase tracking-wider">
+                About Your Company
+              </h2>
+            </div>
+
+            {/* Summary of Step 1 data */}
+            <div className="p-4 rounded-xl border-[1.5px] border-[#131311] bg-[#F3F2EA] text-xs space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-[#131311]">
+                  {project.name}
+                </span>
+                <span className="bg-[#131311] text-white px-2 py-0.5 rounded text-[10px] font-bold">
+                  {project.category}
+                </span>
+              </div>
+              {project.tagline && (
+                <p className="text-[#6C6C6A] font-medium italic">
+                  &ldquo;{project.tagline}&rdquo;
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setStep(1);
+                  setErrors({});
+                }}
+                className="text-[#DE7356] font-bold hover:underline mt-1"
+              >
+                ← Edit project details
+              </button>
+            </div>
+
+            {/* Company Name */}
+            <div>
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 text-[#DE7356]" />
+                  Company / Legal Entity Name *
+                </span>
+              </label>
+              <input
+                type="text"
+                value={company.companyName}
+                onChange={(e) =>
+                  setCompany({ ...company, companyName: e.target.value })
+                }
+                placeholder="e.g. OmniHarvest Inc."
+                className={`w-full bg-[#FAF8F5] border-[1.5px] ${
+                  errors.companyName ? "border-red-400" : "border-[#131311]"
+                } rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]`}
+              />
+              {errors.companyName && (
+                <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> {errors.companyName}
+                </p>
+              )}
+            </div>
+
+            {/* Founder Name & Role */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-[#DE7356]" />
+                    Founder Name *
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  value={company.founderName}
+                  onChange={(e) =>
+                    setCompany({ ...company, founderName: e.target.value })
+                  }
+                  placeholder="e.g. Alex Chen"
+                  className={`w-full bg-[#FAF8F5] border-[1.5px] ${
+                    errors.founderName ? "border-red-400" : "border-[#131311]"
+                  } rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]`}
+                />
+                {errors.founderName && (
+                  <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" /> {errors.founderName}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <Briefcase className="w-3.5 h-3.5 text-[#DE7356]" />
+                    Your Role
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  value={company.founderRole}
+                  onChange={(e) =>
+                    setCompany({ ...company, founderRole: e.target.value })
+                  }
+                  placeholder="e.g. CEO & Co-Founder"
+                  className="w-full bg-[#FAF8F5] border-[1.5px] border-[#131311] rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]"
+                />
+              </div>
+            </div>
+
+            {/* Website */}
+            <div>
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-[#DE7356]" />
+                  Website
+                </span>
+              </label>
+              <input
+                type="url"
+                value={company.website}
+                onChange={(e) =>
+                  setCompany({ ...company, website: e.target.value })
+                }
+                placeholder="https://yourcompany.com"
+                className="w-full bg-[#FAF8F5] border-[1.5px] border-[#131311] rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]"
+              />
+            </div>
+
+            {/* Founded Date & Team Size */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-[#DE7356]" />
+                    Founded
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  value={company.foundedDate}
+                  onChange={(e) =>
+                    setCompany({ ...company, foundedDate: e.target.value })
+                  }
+                  placeholder="e.g. March 2024"
+                  className="w-full bg-[#FAF8F5] border-[1.5px] border-[#131311] rounded-xl px-4 py-3 text-sm font-semibold text-[#131311] placeholder-[#6C6C6A] focus:outline-none focus:ring-2 focus:ring-[#DE7356]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-[#131311] mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-[#DE7356]" />
+                    Team Size
+                  </span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {teamSizes.map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() =>
+                        setCompany({ ...company, teamSize: size })
+                      }
+                      className={`py-2 px-3.5 rounded-xl border-[1.5px] text-xs font-bold transition-all ${
+                        company.teamSize === size
+                          ? "border-[#131311] bg-[#DE7356] text-[#131311] shadow-[2px_2px_0px_#131311]"
+                          : "border-zinc-300 bg-[#FAF8F5] text-[#6C6C6A] hover:border-[#131311] hover:text-[#131311]"
+                      }`}
                     >
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-extrabold text-[#131311]">{q.investorName}</span>
-                        <span className="text-[#6C6C6A] font-bold">{q.factor}</span>
-                      </div>
-                      <p className="text-xs text-[#131311] leading-relaxed italic font-medium">
-                        {item ? item.feedback : "Verified during deliberation."}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Key Action Remediation Points */}
-            <div className="p-6 rounded-xl border-[1.5px] border-[#131311] bg-[#FAF8F5] space-y-3 text-xs">
-              <span className="text-[#131311] font-extrabold uppercase tracking-wider block">
-                Priority Diligence Action Items:
-              </span>
-              <div className="flex items-start gap-2.5 text-[#131311] font-semibold">
-                <span className="w-2 h-2 rounded-full bg-[#DE7356] mt-1 shrink-0" />
-                <span>Prepare audited field technician cost breakdown for Marcus Vance prior to term sheet execution.</span>
-              </div>
-              <div className="flex items-start gap-2.5 text-[#131311] font-semibold">
-                <span className="w-2 h-2 rounded-full bg-[#DE7356] mt-1 shrink-0" />
-                <span>Provide raw cohort retention curves and customer net dollar retention telemetry for Dr. Elena Rostova.</span>
-              </div>
-              <div className="flex items-start gap-2.5 text-[#131311] font-semibold">
-                <span className="w-2 h-2 rounded-full bg-[#DE7356] mt-1 shrink-0" />
-                <span>Formalize channel distribution exclusivity contracts with agricultural cooperatives for David Sullivan.</span>
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center justify-between pt-4 border-t border-zinc-200">
               <button
-                onClick={handleRestart}
-                className="px-6 py-3.5 rounded-full border-[1.5px] border-[#131311] text-xs font-bold hover:bg-zinc-100 flex items-center gap-2 justify-center w-full sm:w-auto"
+                type="button"
+                onClick={() => {
+                  setStep(1);
+                  setErrors({});
+                }}
+                className="px-6 py-3.5 rounded-full border-[1.5px] border-[#131311] text-xs font-bold hover:bg-zinc-100 flex items-center gap-2 transition-colors"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>PRACTICE ROUNDS AGAIN</span>
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>BACK</span>
               </button>
 
-              <Link
-                href="/report"
-                className="btn-projectone-accent px-8 py-3.5 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 w-full sm:w-auto"
+              <button
+                type="submit"
+                className="btn-projectone-accent px-8 py-3.5 text-xs sm:text-sm font-extrabold"
               >
-                <span>VIEW COMPLETE SYNDICATE REPORT</span>
+                <span>ENTER THE ARENA</span>
                 <span className="btn-arrow-box">
                   <ArrowRight className="w-4 h-4" />
                 </span>
-              </Link>
+              </button>
             </div>
-          </div>
+          </form>
         )}
-
       </div>
     </div>
   );
