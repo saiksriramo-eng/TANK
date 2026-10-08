@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Sedgwick+Ave&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+/* ============================================================
+   TANK - ProjectOne Design System
+   Exact replication of https://www.projectone.website/
+   ACCENT COLOR: #DE7356 (Coral/Terracotta replacing lime green)
+   ============================================================ */
+
+:root {
+  --accent: #DE7356;
+  --accent-hover: #c96246;
+  --accent-light: #fbeee9;
+  --bg-main: #FAF8F5;
+  --bg-card-light: #F3F2EA;
+  --bg-card-alt: #EAEAEA;
+  --bg-card-dark: #131311;
+  --bg-dark-surface: #1C1D1A;
+  --border-dark: #131311;
+  --text-dark: #131311;
+  --text-muted: #6C6C6A;
+  --shadow-brutal: 4px 4px 0px #131311;
+  --shadow-brutal-sm: 2px 2px 0px #131311;
+  --shadow-brutal-lg: 6px 6px 0px #131311;
+  --font-handwriting: 'Caveat', 'Sedgwick Ave', cursive;
+}
+
+::selection {
+  background-color: #DE7356;
+  color: #131311;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #FAF8F5;
+  color: #131311;
+}
+
+body {
+  background-color: #FAF8F5;
+  color: #131311;
+  font-family: 'Plus Jakarta Sans', var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: hidden;
+}
+
+/* Handwritten note styling */
+.font-handwriting {
+  font-family: var(--font-handwriting);
+}
+
+/* Brutalist Button Styles */
+.btn-projectone-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: #DE7356;
+  color: #131311;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 8px 6px 18px;
+  border-radius: 9999px;
+  border: 1.5px solid #131311;
+  box-shadow: 3px 3px 0px #131311;
+  transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-projectone-accent:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #131311;
+  background-color: #e57c60;
+}
+
+.btn-projectone-accent:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #131311;
+}
+
+.btn-projectone-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: #131311;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 8px 6px 18px;
+  border-radius: 9999px;
+  border: 1.5px solid #131311;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3);
+  transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-projectone-dark:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
+  background-color: #20201d;
+}
+
+.btn-projectone-dark:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+}
+
+/* Arrow circle container inside buttons */
+.btn-arrow-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background-color: #131311;
+  color: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.btn-arrow-box-white {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  color: #131311;
+  transition: transform 0.2s ease;
+}
+
+.btn-projectone-accent:hover .btn-arrow-box,
+.btn-projectone-dark:hover .btn-arrow-box-white {
+  transform: translateX(2px);
+}
+
+/* ProjectOne Card Styles */
+.card-sticker-accent {
+  background-color: #DE7356;
+  color: #131311;
+  border: 1.5px solid #131311;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px #131311;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-sticker-light {
+  background-color: #F3F2EA;
+  color: #131311;
+  border: 1.5px solid #131311;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px #131311;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-sticker-polaroid {
+  background-color: #F3F2EA;
+  color: #131311;
+  border: 1.5px solid #131311;
+  border-radius: 10px;
+  padding: 10px 10px 14px;
+  box-shadow: 4px 4px 0px #131311;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.card-sticker-polaroid:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 6px 8px 0px #131311;
+  z-index: 20;
+}
+
+/* Speech bubbles with tails */
+.speech-bubble {
+  position: relative;
+  background-color: #DE7356;
+  color: #131311;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 8px 16px;
+  display: inline-block;
+  box-shadow: 2px 2px 0px #131311;
+  border: 1.5px solid #131311;
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 8px solid #DE7356;
+}
+
+/* Marquee ribbon */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
