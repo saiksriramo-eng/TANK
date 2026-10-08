@@ -2,21 +2,48 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { ArrowRight, Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { ArrowRight, Menu, X, User as UserIcon, LogOut } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+
+    // Check user auth state
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    router.push("/home");
+    router.refresh();
+  };
 
   const isLandingPage = pathname === "/";
 
@@ -25,7 +52,8 @@ export default function Navbar() {
     return (
       <header className="sticky top-0 z-50 w-full bg-[#FAF8F5]/80 backdrop-blur-md transition-all py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center h-14">
+          <div className="flex items-center justify-between h-14">
+            <div className="w-16" />
             <Link
               href="/"
               className="flex items-center group focus-visible:outline-none"
@@ -34,6 +62,23 @@ export default function Navbar() {
                 TANK
               </span>
             </Link>
+            <div className="w-16 flex justify-end">
+              {user ? (
+                <button
+                  onClick={handleSignOut}
+                  className="text-xs font-bold text-[#6C6C6A] hover:text-[#131311] uppercase tracking-wider"
+                >
+                  Sign Out
+                </button>
+              ) : (
+                <Link
+                  href="/auth"
+                  className="text-xs font-bold text-[#131311] hover:text-[#DE7356] uppercase tracking-wider"
+                >
+                  Sign In
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -80,6 +125,27 @@ export default function Navbar() {
             >
               FAQs
             </Link>
+
+            {/* Auth Link in Nav Pill */}
+            {user ? (
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="hover:text-white transition-colors flex items-center gap-1.5 text-zinc-400"
+                title={`Signed in as ${user.email}`}
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out</span>
+              </button>
+            ) : (
+              <Link
+                href="/auth"
+                className="hover:text-white text-zinc-300 transition-colors flex items-center gap-1"
+              >
+                <UserIcon className="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </Link>
+            )}
           </nav>
 
           {/* Action Button inside Pill in #DE7356 with rounded-full arrow box */}
@@ -95,10 +161,26 @@ export default function Navbar() {
         </div>
 
         {/* Mobile menu trigger */}
-        <div className="lg:hidden flex items-center">
+        <div className="lg:hidden flex items-center gap-2">
+          {user ? (
+            <button
+              onClick={handleSignOut}
+              className="text-[11px] font-bold uppercase text-[#6C6C6A] hover:text-[#131311] px-2 py-1"
+            >
+              Sign Out
+            </button>
+          ) : (
+            <Link
+              href="/auth"
+              className="text-[11px] font-extrabold uppercase text-[#131311] hover:text-[#DE7356] px-2 py-1"
+            >
+              Sign In
+            </Link>
+          )}
+
           <Link
             href="/pitch"
-            className="mr-2 inline-flex items-center gap-1.5 bg-[#DE7356] text-[#131311] font-extrabold text-[11px] uppercase tracking-wider px-3 py-1.5 rounded-full border border-[#131311] shadow-[2px_2px_0px_#131311]"
+            className="inline-flex items-center gap-1.5 bg-[#DE7356] text-[#131311] font-extrabold text-[11px] uppercase tracking-wider px-3 py-1.5 rounded-full border border-[#131311] shadow-[2px_2px_0px_#131311]"
           >
             <span>PITCH</span>
             <span className="w-4 h-4 bg-[#131311] text-white rounded-full flex items-center justify-center">
@@ -138,10 +220,31 @@ export default function Navbar() {
           <Link
             href="/home#faqs"
             onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-zinc-300 hover:text-white"
+            className="block py-2 text-zinc-300 hover:text-white border-b border-zinc-800"
           >
             FAQs
           </Link>
+
+          {user ? (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleSignOut();
+              }}
+              className="w-full text-left py-2 text-zinc-300 hover:text-white border-b border-zinc-800"
+            >
+              Sign Out ({user.email})
+            </button>
+          ) : (
+            <Link
+              href="/auth"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-zinc-300 hover:text-white border-b border-zinc-800"
+            >
+              Sign In / Sign Up
+            </Link>
+          )}
+
           <div className="pt-2">
             <Link
               href="/pitch"
