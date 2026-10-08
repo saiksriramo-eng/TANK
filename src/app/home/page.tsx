@@ -402,110 +402,154 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* 5 Column Stair-step timeline headers */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6">
-          <div className="bg-[#EAEAEA] py-2 px-3 rounded-md text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311]">
-            INITIAL SUBMISSION
-          </div>
-          <div className="bg-[#EAEAEA] py-2 px-3 rounded-md text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311]">
-            VC ASSESSMENT
-          </div>
-          <div className="bg-[#EAEAEA] py-2 px-3 rounded-md text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311]">
-            CROSS EXAMINATION
-          </div>
-          <div className="bg-[#EAEAEA] py-2 px-3 rounded-md text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311]">
-            DELIBERATION & DEBATE
-          </div>
-          <div className="bg-[#EAEAEA] py-2 px-3 rounded-md text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311]">
-            EVALUATION DOSSIER
-          </div>
-        </div>
-
-        {/* 6 Process Cards in Staircase Layout with #DE7356 */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          {/* Card 1: Column 1 */}
-          <div className="card-sticker-accent p-5 flex flex-col justify-between min-h-[180px]">
-            <div className="flex justify-between items-start">
-              <span className="font-extrabold text-sm text-[#131311]">Onboarding</span>
-              <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center">
-                1
-              </span>
+        {/* 5 Process Columns Grid (Cleanly aligned, unified top baseline) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-stretch">
+          {/* Column 1: Initial Submission */}
+          <div className="flex flex-col gap-2.5">
+            <div className="bg-[#EAEAEA] py-2 px-3 rounded-lg text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311] border border-[#131311]/10">
+              INITIAL SUBMISSION
             </div>
-            <p className="text-xs text-[#131311] font-medium leading-relaxed mt-4">
-              You submit your startup thesis, deck, and unit economics. TANK ingests and flags vulnerabilities.
-            </p>
-          </div>
-
-          {/* Card 2: Column 2 (Spanning or placed in Col 2) */}
-          <div className="card-sticker-accent p-5 flex flex-col justify-between min-h-[180px] md:translate-y-8">
-            <div className="flex justify-between items-start">
-              <span className="font-extrabold text-sm text-[#131311]">Investor Briefing</span>
-              <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center">
-                2
-              </span>
-            </div>
-            <p className="text-xs text-[#131311] font-medium leading-relaxed mt-4">
-              Four AI partner personas analyze your deck and prepare aggressive cross-examination questions.
-            </p>
-          </div>
-
-          {/* Card 3: Column 3 */}
-          <div className="card-sticker-accent p-5 flex flex-col justify-between min-h-[180px] md:translate-y-16">
-            <div className="flex justify-between items-start">
-              <span className="font-extrabold text-sm text-[#131311]">The Hot Seat</span>
-              <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center">
-                3
-              </span>
-            </div>
-            <p className="text-xs text-[#131311] font-medium leading-relaxed mt-4">
-              Enter the Arena. 4 partners cross-examine you live on unit economics, defensibility, and burn.
-            </p>
-          </div>
-
-          {/* Card 4: Column 4 */}
-          <div className="card-sticker-accent p-5 flex flex-col justify-between min-h-[180px] md:translate-y-24">
-            <div className="flex justify-between items-start">
-              <span className="font-extrabold text-sm text-[#131311]">Partner Debate</span>
-              <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center">
-                4
-              </span>
-            </div>
-            <p className="text-xs text-[#131311] font-medium leading-relaxed mt-4">
-              Listen to the investors deliberate behind closed doors on whether your venture deserves a term sheet.
-            </p>
-          </div>
-
-          {/* Card 5 & 6: Column 5 */}
-          <div className="space-y-4 md:translate-y-32">
-            <div className="card-sticker-accent p-5 flex flex-col justify-between min-h-[140px]">
-              <div className="flex justify-between items-start">
-                <span className="font-extrabold text-sm text-[#131311]">Scorecard</span>
-                <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center">
-                  5
-                </span>
+            <div className="card-sticker-accent p-4 sm:p-5 flex flex-col justify-between flex-1 hover:-translate-y-1 hover:shadow-[5px_5px_0px_#131311] transition-all">
+              <div>
+                <div className="flex justify-between items-start mb-3">
+                  <span className="font-extrabold text-sm sm:text-base text-[#131311]">Onboarding</span>
+                  <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                    1
+                  </span>
+                </div>
+                <p className="text-xs text-[#131311] font-medium leading-relaxed">
+                  You submit your startup thesis, deck, and unit economics. TANK ingests and flags vulnerabilities.
+                </p>
               </div>
-              <p className="text-xs text-[#131311] font-medium leading-relaxed mt-2">
-                5-pillar forensic scorecard dissecting Market, Product, Financials, Moat, and Team.
-              </p>
-            </div>
-
-            <div className="card-sticker-accent p-5 flex flex-col justify-between min-h-[140px]">
-              <div className="flex justify-between items-start">
-                <span className="font-extrabold text-sm text-[#131311]">Term Sheet</span>
-                <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center">
-                  6
-                </span>
+              <div className="mt-4 pt-3 border-t border-[#131311]/20 flex items-center justify-between text-[10px] font-bold tracking-wider uppercase text-[#131311]/75">
+                <span>Phase 01</span>
+                <span>Deck Ingestion</span>
               </div>
-              <p className="text-xs text-[#131311] font-medium leading-relaxed mt-2">
-                The final verdict: Simulated valuation offer or brutal breakdown of why they passed.
-              </p>
+            </div>
+          </div>
+
+          {/* Column 2: VC Assessment */}
+          <div className="flex flex-col gap-2.5">
+            <div className="bg-[#EAEAEA] py-2 px-3 rounded-lg text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311] border border-[#131311]/10">
+              VC ASSESSMENT
+            </div>
+            <div className="card-sticker-accent p-4 sm:p-5 flex flex-col justify-between flex-1 hover:-translate-y-1 hover:shadow-[5px_5px_0px_#131311] transition-all">
+              <div>
+                <div className="flex justify-between items-start mb-3">
+                  <span className="font-extrabold text-sm sm:text-base text-[#131311]">Investor Briefing</span>
+                  <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                    2
+                  </span>
+                </div>
+                <p className="text-xs text-[#131311] font-medium leading-relaxed">
+                  Four AI partner personas analyze your deck and prepare aggressive cross-examination questions.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-[#131311]/20 flex items-center justify-between text-[10px] font-bold tracking-wider uppercase text-[#131311]/75">
+                <span>Phase 02</span>
+                <span>4 VC Personas</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 3: Cross Examination */}
+          <div className="flex flex-col gap-2.5">
+            <div className="bg-[#EAEAEA] py-2 px-3 rounded-lg text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311] border border-[#131311]/10">
+              CROSS EXAMINATION
+            </div>
+            <div className="card-sticker-accent p-4 sm:p-5 flex flex-col justify-between flex-1 hover:-translate-y-1 hover:shadow-[5px_5px_0px_#131311] transition-all">
+              <div>
+                <div className="flex justify-between items-start mb-3">
+                  <span className="font-extrabold text-sm sm:text-base text-[#131311]">The Hot Seat</span>
+                  <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                    3
+                  </span>
+                </div>
+                <p className="text-xs text-[#131311] font-medium leading-relaxed">
+                  Enter the Arena. 4 partners cross-examine you live on unit economics, defensibility, and burn.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-[#131311]/20 flex items-center justify-between text-[10px] font-bold tracking-wider uppercase text-[#131311]/75">
+                <span>Phase 03</span>
+                <span>Live Arena</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 4: Deliberation & Debate */}
+          <div className="flex flex-col gap-2.5">
+            <div className="bg-[#EAEAEA] py-2 px-3 rounded-lg text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311] border border-[#131311]/10">
+              DELIBERATION & DEBATE
+            </div>
+            <div className="card-sticker-accent p-4 sm:p-5 flex flex-col justify-between flex-1 hover:-translate-y-1 hover:shadow-[5px_5px_0px_#131311] transition-all">
+              <div>
+                <div className="flex justify-between items-start mb-3">
+                  <span className="font-extrabold text-sm sm:text-base text-[#131311]">Partner Debate</span>
+                  <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                    4
+                  </span>
+                </div>
+                <p className="text-xs text-[#131311] font-medium leading-relaxed">
+                  Listen to the investors deliberate behind closed doors on whether your venture deserves a term sheet.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-[#131311]/20 flex items-center justify-between text-[10px] font-bold tracking-wider uppercase text-[#131311]/75">
+                <span>Phase 04</span>
+                <span>Closed Caucus</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 5: Evaluation Dossier (Split Cards 5 & 6) */}
+          <div className="flex flex-col gap-2.5">
+            <div className="bg-[#EAEAEA] py-2 px-3 rounded-lg text-[11px] font-extrabold uppercase tracking-wider text-center text-[#131311] border border-[#131311]/10">
+              EVALUATION DOSSIER
+            </div>
+            <div className="flex flex-col gap-2.5 flex-1">
+              {/* Card 5: Scorecard */}
+              <div className="card-sticker-accent p-3.5 sm:p-4 flex flex-col justify-between flex-1 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_#131311] transition-all">
+                <div>
+                  <div className="flex justify-between items-start mb-1.5">
+                    <span className="font-extrabold text-xs sm:text-sm text-[#131311]">Scorecard</span>
+                    <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                      5
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#131311] font-medium leading-snug">
+                    5-pillar forensic scorecard dissecting Market, Product, Financials, Moat, and Team.
+                  </p>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-[#131311]/20 flex items-center justify-between text-[9px] font-bold tracking-wider uppercase text-[#131311]/75">
+                  <span>Output A</span>
+                  <span>5 Pillars</span>
+                </div>
+              </div>
+
+              {/* Card 6: Term Sheet */}
+              <div className="card-sticker-accent p-3.5 sm:p-4 flex flex-col justify-between flex-1 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_#131311] transition-all">
+                <div>
+                  <div className="flex justify-between items-start mb-1.5">
+                    <span className="font-extrabold text-xs sm:text-sm text-[#131311]">Term Sheet</span>
+                    <span className="w-5 h-5 rounded-full bg-[#131311] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                      6
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#131311] font-medium leading-snug">
+                    The final verdict: Simulated valuation offer or brutal breakdown of why they passed.
+                  </p>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-[#131311]/20 flex items-center justify-between text-[9px] font-bold tracking-wider uppercase text-[#131311]/75">
+                  <span>Output B</span>
+                  <span>Final Verdict</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Infinite Marquee Banner in signature #DE7356 */}
-      <div className="w-full bg-[#DE7356] border-y-[1.5px] border-[#131311] py-3.5 overflow-hidden mt-36">
+      <div className="w-full bg-[#DE7356] border-y-[1.5px] border-[#131311] py-3.5 overflow-hidden mt-14">
         <div className="animate-marquee font-extrabold text-sm sm:text-base text-[#131311] uppercase tracking-wider flex items-center">
           <span className="mx-4">• ZERO FLUFF</span>
           <span className="mx-4">• REAL-TIME INTERACTION</span>
