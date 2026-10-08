@@ -1,6 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import { 
   FileText, 
   ArrowLeft, 
@@ -93,6 +96,17 @@ const DELIBERATION_NOTES = [
 ];
 
 export default function ReportPage() {
+  const router = useRouter();
+
+  // Auth Guard: Ensure only authenticated users can view the evaluation report
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        router.replace("/auth?redirect=/report");
+      }
+    });
+  }, [router]);
   return (
     <div className="min-h-[calc(100vh-5rem)] bg-[#FAF8F5] text-[#131311] py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10">

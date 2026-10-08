@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import {
   ArrowLeft,
   ArrowRight,
@@ -66,6 +67,14 @@ export default function PitchInputPage() {
   const [uploadFeedback, setUploadFeedback] = useState<string>("");
 
   useEffect(() => {
+    // Auth Guard: Ensure only authenticated users can access the pitch editor
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        router.replace("/auth?redirect=/pitch");
+      }
+    });
+
     // Check if intake data already exists in localStorage
     if (typeof window !== "undefined") {
       try {
@@ -86,7 +95,7 @@ export default function PitchInputPage() {
         console.error("Error loading saved pitch from localStorage:", e);
       }
     }
-  }, []);
+  }, [router]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 B";

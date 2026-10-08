@@ -29,8 +29,25 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  // Refresh auth token if expired
-  await supabase.auth.getUser();
+  // Refresh auth token if expired and retrieve current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const pathname = request.nextUrl.pathname;
+
+  // Protected routes that strictly require authentication
+  const protectedPaths = ["/arena", "/pitch", "/intake", "/report"];
+  const isProtected = protectedPaths.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`)
+  );
+
+  if (isProtected && !user) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/auth";
+    redirectUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
 
   return supabaseResponse;
 }

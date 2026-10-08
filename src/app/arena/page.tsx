@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import {
   ArrowLeft,
   ArrowRight,
@@ -42,6 +43,16 @@ interface CompanyData {
 export default function ArenaIntakePage() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
+
+  // Auth Guard: Ensure only authenticated users can explore the arena
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        router.replace("/auth?redirect=/arena");
+      }
+    });
+  }, [router]);
 
   const [project, setProject] = useState<ProjectData>({
     name: "",

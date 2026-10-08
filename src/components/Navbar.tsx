@@ -39,10 +39,20 @@ export default function Navbar() {
   }, [supabase]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.error("Sign out error:", e);
+    }
     setUser(null);
-    router.push("/home");
-    router.refresh();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("tank_active_pitch");
+      localStorage.removeItem("tank_intake_data");
+      localStorage.removeItem("tank_company_data");
+      localStorage.removeItem("tank_intake_complete");
+      localStorage.removeItem("tank_pitch_files");
+      window.location.href = "/auth";
+    }
   };
 
   const isLandingPage = pathname === "/";
